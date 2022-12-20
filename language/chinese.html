@@ -4,32 +4,29 @@
     <meta charset="UTF-8">
     <title>監測數據表</title>
     <h1 id="page_title">監測數據表</h1>
-    <canvas id="jellyfish_data" width="480px" height="320px"></canvas>
-    <canvas id="ph_data" width="480px" height="320px"></canvas>
-    <canvas id="orp_data" width="480px" height="320px"></canvas>
-    <canvas id="salinity_data" width="480px" height="320px"></canvas>
-    <canvas id="temp_data" width="480px" height="320px"></canvas>
-    <canvas id="water_data" width="480px" height="320px"></canvas>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="jellyfish_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="ph_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="orp_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="salinity_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="temp_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="water_data"></canvas></td></tr>
+    </table>
     <style>
       h1 {
         padding:7px;font-size:30px;width:160px;background-color:#0080c0;color:#ffffff;
       }
-      #jellyfish_data {
-        float:left;
-      }
-      #ph_data {
-        float:left;
-      }
-      #orp_data {
-        float:left;
-      }
-      #salinity_data {
-        float:left;
-      }
-      #temp_data {
-        float:left;
-      }
-      #water_data {
+      table {
         float:left;
       }
     </style>
