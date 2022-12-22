@@ -1,11 +1,287 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>jump page</title>
-  </head>
-  <body>
-    <a href="https://lyksjellyfish.github.io/language/english.html">英文</a><br>
-    <a href="https://lyksjellyfish.github.io/language/chinese.html">中文</a><br>
-  </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monitoring Data(監測數據表)</title>
+    <h1 id="page_title">Monitoring Data(監測數據表)</h1>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="jellyfish_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="ph_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="orp_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="salinity_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="temp_data"></canvas></td></tr>
+    </table>
+    <table width="480px" height="320px">
+      <tr><td><canvas id="water_data"></canvas></td></tr>
+    </table>
+    <style>
+      h1 {
+        padding:7px;font-size:30px;width:395px;background-color:#0080c0;color:#ffffff;
+      }
+      table {
+        float:left;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+
+<body>
+    <script>
+        let jellyfish_, ph_, opr_, sal_, tem_, wat_;
+
+        function drawChart() {
+          fetch('https://script.google.com/macros/s/AKfycbwx-GkIvFVA6MiySGwjObhPKycx87QEAxEoUZWu4Y8__m5gGfHwraWn3oe7w-OYAvE/exec')
+              .then(res => res.json())
+              .then(data => {
+                  let jsonData = data.content;
+
+                  let jellyfish_num = [];
+                  let ph_data = [];
+                  let orp_data = [];
+                  let salinity_data = [];
+                  let temp_data = [];
+                  let water_data = [];
+
+                  for (let i=1; i<11; i++) {
+                    // 裁減時間顯示
+                    let readTime = jsonData[i][0];
+                    let nowTime = '';
+                    for (let j=1; j<readTime.length; j++) {
+                      if (readTime[j] == " ") {
+                        nowTime = readTime.slice(j+1);
+                        break
+                      }
+                    }
+                    // 建立資料清單
+                    jellyfish_num.push({"time_data": nowTime, "jellyfish_num": jsonData[i][1]})
+                    ph_data.push({"time_data": nowTime, "ph_data": jsonData[i][2]})
+                    orp_data.push({"time_data": nowTime, "orp_data": jsonData[i][3]})
+                    salinity_data.push({"time_data": nowTime, "salinity_data": jsonData[i][4]})
+                    temp_data.push({"time_data": nowTime, "temp_data": jsonData[i][5]})
+                    water_data.push({"time_data": nowTime, "water_data": jsonData[i][6]})
+
+                    if (i == 10) {
+                      jellyfish_ = jsonData[i][1];
+                      ph_ = jsonData[i][2];
+                      opr_ = jsonData[i][3];
+                      sal_ = jsonData[i][4];
+                      tem_ = jsonData[i][5];
+                      wat_ = jsonData[i][6];
+                    }
+                  }
+
+                  // 新增水母數量
+                  var ctx = document.getElementById('jellyfish_data').getContext('2d');
+                  var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                      labels: jellyfish_num.map(x=>x.time_data),
+                      datasets: [{
+                        label: 'jellyfish_num',
+                        data: jellyfish_num.map(x=>x.jellyfish_num),        // Line
+                        lineTension: 0,
+                        backgroundColor: '#B97A57',
+                        borderColor: '#B97A57',
+                        fill: false,
+                        borderWidth: 2,        // Point
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                      }]
+                    },
+                    options:{
+                      title:{
+                        display: true,
+                        text: 'jellyfish(倒立水母): '+jellyfish_,
+                        position: 'bottom',
+                        fontSize: 24,
+                        fontStyle: 'normal',
+                        fontFamily: 'Century Gothic'
+                      },      legend:{
+                        display: false
+                      },
+                      responsive: true
+                    }
+                  });
+
+                  // 新增PH
+                  var ctx = document.getElementById('ph_data').getContext('2d');
+                  var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                      labels: ph_data.map(x=>x.time_data),
+                      datasets: [{
+                        label: 'ph_data',
+                        data: ph_data.map(x=>x.ph_data),        // Line
+                        lineTension: 0,
+                        backgroundColor: '#A349A4',
+                        borderColor: '#A349A4',
+                        fill: false,
+                        borderWidth: 2,        // Point
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                      }]
+                    },
+                    options:{
+                      title:{
+                        display: true,
+                        text: 'pH(酸鹼值): '+ph_,
+                        position: 'bottom',
+                        fontSize: 24,
+                        fontStyle: 'normal',
+                        fontFamily: 'Century Gothic'
+                      },      legend:{
+                        display: false
+                      },
+                      responsive: true
+                    }
+                  });
+
+                  // 新增ORP
+                  var ctx = document.getElementById('orp_data').getContext('2d');
+                  var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                      labels: orp_data.map(x=>x.time_data),
+                      datasets: [{
+                        label: 'orp_data',
+                        data: orp_data.map(x=>x.orp_data),        // Line
+                        lineTension: 0,
+                        backgroundColor: '#FF7F27',
+                        borderColor: '#FF7F27',
+                        fill: false,
+                        borderWidth: 2,        // Point
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                      }]
+                    },
+                    options:{
+                      title:{
+                        display: true,
+                        text: 'ORP(氧化還原值): '+opr_,
+                        position: 'bottom',
+                        fontSize: 24,
+                        fontStyle: 'normal',
+                        fontFamily: 'Century Gothic'
+                      },      legend:{
+                        display: false
+                      },
+                      responsive: true
+                    }
+                  });
+
+                  // 新增Salinity
+                  var ctx = document.getElementById('salinity_data').getContext('2d');
+                  var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                      labels: salinity_data.map(x=>x.time_data),
+                      datasets: [{
+                        label: 'salinity_data',
+                        data: salinity_data.map(x=>x.salinity_data),        // Line
+                        lineTension: 0,
+                        backgroundColor: '#ED1C24',
+                        borderColor: '#ED1C24',
+                        fill: false,
+                        borderWidth: 2,        // Point
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                      }]
+                    },
+                    options:{
+                      title:{
+                        display: true,
+                        text: 'Salinity(鹽度): '+sal_,
+                        position: 'bottom',
+                        fontSize: 24,
+                        fontStyle: 'normal',
+                        fontFamily: 'Century Gothic'
+                      },      legend:{
+                        display: false
+                      },
+                      responsive: true
+                    }
+                  });
+
+                  // 新增Temperature1
+                  var ctx = document.getElementById('temp_data').getContext('2d');
+                  var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                      labels: temp_data.map(x=>x.time_data),
+                      datasets: [{
+                        label: 'temp_data',
+                        data: temp_data.map(x=>x.temp_data),        // Line
+                        lineTension: 0,
+                        backgroundColor: '#22B14C',
+                        borderColor: '#22B14C',
+                        fill: false,
+                        borderWidth: 2,        // Point
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                      }]
+                    },
+                    options:{
+                      title:{
+                        display: true,
+                        text: 'Temperature(溫度): '+tem_,
+                        position: 'bottom',
+                        fontSize: 24,
+                        fontStyle: 'normal',
+                        fontFamily: 'Century Gothic'
+                      },      legend:{
+                        display: false
+                      },
+                      responsive: true
+                    }
+                  });
+
+                  // 新增WaterLevel
+                  var ctx = document.getElementById('water_data').getContext('2d');
+                  var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                      labels: water_data.map(x=>x.time_data),
+                      datasets: [{
+                        label: 'water_data',
+                        data: water_data.map(x=>x.water_data),        // Line
+                        lineTension: 0,
+                        backgroundColor: '#00A2E8',
+                        borderColor: '#00A2E8',
+                        fill: false,
+                        borderWidth: 2,        // Point
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                      }]
+                    },
+                    options:{
+                      title:{
+                        display: true,
+                        text: 'Water Level(水位): '+wat_,
+                        position: 'bottom',
+                        fontSize: 24,
+                        fontStyle: 'normal',
+                        fontFamily: 'Century Gothic'
+                      },      legend:{
+                        display: false
+                      },
+                      responsive: true
+                    }
+                  });
+              });
+              //console.log("done");
+            }
+            drawChart();
+            setInterval(drawChart, 60000);
+
+    </script>
+</body>
+
 </html>
